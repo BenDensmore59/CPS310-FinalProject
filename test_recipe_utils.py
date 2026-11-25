@@ -2,7 +2,13 @@
 
 import json
 
-from recipe_utils import filter_by_category, load_config, load_recipes, search_by_name
+from recipe_utils import (
+    Search_by_Ingredient,
+    filter_by_category,
+    load_config,
+    load_recipes,
+    search_by_name,
+)
 
 
 def test_search_by_name_finds_partial_match():
@@ -26,6 +32,32 @@ def test_search_by_name_is_case_insensitive():
 def test_search_by_name_returns_empty_list_when_no_match():
     recipes = [{"name": "Chicken Alfredo", "category": "Dinner"}]
     assert search_by_name(recipes, "pizza") == []
+
+
+def test_search_by_ingredient_finds_partial_match():
+    recipes = [
+        {
+            "name": "Chicken Alfredo",
+            "ingredients": [{"name": "Chicken breast"}],
+        },
+        {"name": "Berry Smoothie", "ingredients": [{"name": "Blueberries"}]},
+    ]
+    assert Search_by_Ingredient(recipes, "chick") == [recipes[0]]
+
+
+def test_search_by_ingredient_is_case_insensitive_and_trims_whitespace():
+    recipes = [
+        {
+            "name": "Olive Pasta",
+            "ingredients": [{"name": "Extra Virgin Olive Oil"}],
+        }
+    ]
+    assert Search_by_Ingredient(recipes, "  OLIVE OIL  ") == recipes
+
+
+def test_search_by_ingredient_returns_empty_list_when_no_match():
+    recipes = [{"name": "Berry Smoothie", "ingredients": [{"name": "Banana"}]}]
+    assert Search_by_Ingredient(recipes, "spinach") == []
 
 
 def test_filter_by_category_returns_matching_recipes():
