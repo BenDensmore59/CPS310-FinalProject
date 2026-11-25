@@ -25,6 +25,19 @@ def search_by_name(recipes, search_term):
     ]
 
 
+def Search_by_Ingredient(recipes, search_term):
+    """Return recipes with an ingredient name containing the search term."""
+    normalized_term = search_term.strip().casefold()
+    return [
+        recipe
+        for recipe in recipes
+        if any(
+            normalized_term in ingredient["name"].casefold()
+            for ingredient in recipe["ingredients"]
+        )
+    ]
+
+
 def filter_by_category(recipes, category):
     """Return recipes that match the requested category."""
     category = category.lower()
