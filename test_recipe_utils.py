@@ -1,6 +1,7 @@
 """Tests for the starter Recipe & Meal Planner."""
 
 import json
+import app
 
 from recipe_utils import (
     Search_by_Ingredient,
@@ -59,6 +60,25 @@ def test_search_by_ingredient_returns_empty_list_when_no_match():
     recipes = [{"name": "Berry Smoothie", "ingredients": [{"name": "Banana"}]}]
     assert Search_by_Ingredient(recipes, "spinach") == []
 
+def test_random_meal_suggestion_handles_empty_recipe_list(capsys):
+    app.Random_Meal_Suggestion([])
+
+    assert "No recipes found." in capsys.readouterr().out
+
+def test_random_meal_suggestion_displays_randomly_selected_recipe(monkeypatch):
+    recipes = [
+        {"name": "First recipe"},
+        {"name": "Second recipe"},
+    ]
+    selected_recipe = recipes[1]
+    displayed = []
+
+    monkeypatch.setattr(app.random, "choice", lambda choices: selected_recipe)
+    monkeypatch.setattr(app, "display_recipe", displayed.append)
+
+    app.Random_Meal_Suggestion(recipes)
+
+    assert displayed == [selected_recipe]
 
 def test_filter_by_category_returns_matching_recipes():
     recipes = [
